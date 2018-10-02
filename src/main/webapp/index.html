@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculadora</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    </head>
+    <body>
+        </br>
+        <div class="container-fluid"> 
+            <form>
+
+                <div class="form-group">
+                    </br>
+                    <label>Ancho:</label> 
+                    <input class="form-control" placeholder="Introduzca un número" id="num1">
+                    <div class="container-fluid" id="errornum1"></div>
+                </div>
+
+                <div class="form-group">
+                    </br>
+                    <label>Alto:</label> 
+                    <input class="form-control" placeholder="Introduzca un número" id="num2">
+                    <div class="container-fluid" id="errornum2"></div>
+                </div>
+                <div class="btn-group">
+
+                    <button type="button" class="btn btn-primary" id="btncalcular" disabled="true">Hacer Operación</button>
+                    <button type="reset" class="btn btn-warning" id="btnlimpiar">Limpiar</button>
+                </div>
+            </form> 
+        </div>
+        <div class="container-fluid">
+            <table  class="table table-dark" id="tabla"></table>
+        </div>
+        <div class="container-fluid" id="error"></div>
+    </body>
+    <script>
+        $(document).ready(function () {
+            $("#btnlimpiar").click(function () {
+                $("#solucion").empty();
+                $("#error").empty();
+            });
+
+            function numeroBueno(str) {
+                return /^(\d[0-9]*)$/.test(str);
+            }
+
+
+            $("#num1").keyup(function () {
+                if (numeroBueno($("#num1").val())) {
+                    $("#num1").css("border-color", "green");
+                    $("#errornum1").empty();
+                    document.getElementById("errornum1").style.visibility = "hidden";
+                    $("#btncalcular").attr("disabled", false);
+                } else {
+                    document.getElementById("errornum1").style.visibility = "visible";
+                    $("#errornum1").attr("class", "alert alert-danger");
+                    $("#num1").css("border-color", "red");
+                    $("#errornum1").empty().append("Introduzca solo números");
+                    $("#btncalcular").attr("disabled", true);
+                }
+            });
+
+            $("#num2").keyup(function () {
+                if (numeroBueno($("#num2").val())) {
+                    $("#num2").css("border-color", "green");
+                    $("#errornum2").empty();
+                    document.getElementById("errornum2").style.visibility = "hidden";
+                    $("#btncalcular").attr("disabled", false);
+                } else {
+                    document.getElementById("errornum2").style.visibility = "visible";
+                    $("#errornum2").attr("class", "alert alert-danger");
+                    $("#num2").css("border-color", "red");
+                    $("#errornum2").empty().append("Introduzca solo números");
+                    $("#btncalcular").attr("disabled", true);
+                }
+            });
+
+
+
+            function creartabla() {
+                var numero1 = $("#num1").val().trim();
+                var numero2 = $("#num2").val().trim();
+                var tabla = "";
+                for (var i = 1; i <= numero1; i++) {
+                    tabla += "<tr>";
+                    for (var j = 1; j <= numero2; j++) {
+                        tabla += "<td id='" + i + "-" + j + "'></td>";
+                    }
+                    tabla += "</tr>";
+                }
+                $("#tabla").empty().append(tabla);
+            }
+            $("#btncalcular").click(function () {
+                creartabla();
+                var num1 = $("#num1").val().trim();
+                var num2 = $("#num2").val().trim();
+                
+                for (var i = 1; i <= num1; i++) {
+                    for (var j = 1; j <= num2; j++) {
+                var url = "/p03cs/calculadora?num1=" + i + "&num2=" + j + "&operador=3";
+                (function (i,j){
+                        $.ajax({
+                            dataType: "json",
+                            url: url,
+                            cache: false,
+                            menthod: "GET",
+                            success: function (data) {
+                                $("#"+i+"-"+j).empty().append(data);
+                            }
+                        });
+                        })(i,j);
+                    }
+
+                }
+
+            });
+        });
+    </script>
+</html>
+
